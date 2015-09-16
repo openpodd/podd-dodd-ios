@@ -39,7 +39,10 @@ var PODDLive = React.createClass({
 
   render: function() {
     return (
-      <TabBarIOS>
+      <TabBarIOS
+        tintColor='#000'
+        barTintColor='#fff'
+        translucent={false}>
         <TabBarIOS.Item
           title="Nearby"
           onPress={() => {

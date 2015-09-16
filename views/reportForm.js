@@ -9,8 +9,10 @@ var {
   ScrollView,
   TouchableHighlight,
   Component,
+  Navigator,
 } = React;
 
+var PhotoGallery = require('../components/PhotoGallery/photoGallery');
 var ReportFormContainer = React.createClass({
   
   render: function() {
@@ -26,25 +28,36 @@ var ReportFormContainer = React.createClass({
         <ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.formContentContainer}>
-            <ReportTypeButton title='Human'/>
-            <ReportTypeButton title='Animal'/>
-            <ReportTypeButton title='PublicHealth'/>
+            <ReportTypeButton title='Human' onPress={this.openPhotoGallery}/>
+            <ReportTypeButton title='Animal' onPress={this.openPhotoGallery}/>
+            <ReportTypeButton title='PublicHealth' onPress={this.openPhotoGallery}/>
         </ScrollView>
       </View>
     );
+  },
+
+  openPhotoGallery: function() {
+    this.props.navigator.push({
+      component: PhotoGallery,
+      sceneConfig: Navigator.SceneConfigs.FloatFromRight
+    })
   }
+
 });
 
 class ReportTypeButton extends Component {
 
   render() {
     return (
-      <TouchableHighlight style={styles.typeButton}>
+      <TouchableHighlight 
+        style={styles.typeButton}
+        onPress={this.props.onPress}>
         <Text>{this.props.title}</Text>
       </TouchableHighlight>
     );
   }
 }
+
 module.exports = ReportTypeButton;
 
 
