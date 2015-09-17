@@ -16,7 +16,7 @@ var ReportButton = require('../components/Report/reportButton');
 class NearbyView extends Component {
   render() {
     return (
-      <View style={styles.navigationContentContainer}>
+      <View style={styles.container}>
         <ReportFilterBox/>
         <ReportMap/>
         <ReportButton navigator={this.props.navigator}/>
@@ -26,14 +26,12 @@ class NearbyView extends Component {
 };
 
 var styles = StyleSheet.create({
-  navigationContentContainer: {
+  container: {
     flex: 1,
     alignItems: 'stretch',
     marginTop: 20,
     backgroundColor: '#aaa',
   },
-
-  
 });
 
 module.exports = NearbyView;

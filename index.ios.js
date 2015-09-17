@@ -22,27 +22,13 @@ var PODDLive = React.createClass({
     }
   },
 
-  renderScene(route, navigator) {
-    var Component = route.component;
-    var navBar = route.navigationBar;
-
-    if (navBar) {
-        navBar = React.addons.cloneWithProps(navBar, {navigator, route});
-    }
-    return (
-        <View style={styles.view}>
-            {navBar}
-            <Component {...route.passProps} navigator={navigator} route={route}/>
-        </View>
-    );
-  },
-
   render: function() {
     return (
       <TabBarIOS
         tintColor='#000'
         barTintColor='#fff'
         translucent={false}>
+
         <TabBarIOS.Item
           title="Nearby"
           onPress={() => {
@@ -64,7 +50,6 @@ var PODDLive = React.createClass({
               component: NearbyView,
             }}
             renderScene={this.renderScene}/>
-
         </TabBarIOS.Item>
                 
         <TabBarIOS.Item 
@@ -88,7 +73,6 @@ var PODDLive = React.createClass({
               component: FeedContainerView,
             }}
             renderScene={this.renderScene}/>
-
         </TabBarIOS.Item>
 
         <TabBarIOS.Item 
@@ -99,7 +83,7 @@ var PODDLive = React.createClass({
             });
           }}
           selected={this.state.selectedTab === 'profile'}>
-          <View style={styles.container}></View>
+          <View></View>
         </TabBarIOS.Item>
 
         <TabBarIOS.Item 
@@ -110,16 +94,25 @@ var PODDLive = React.createClass({
             });
           }}
           selected={this.state.selectedTab === 'notification'}>
-          <View style={styles.container}></View>
+          <View></View>
         </TabBarIOS.Item>
       </TabBarIOS>
     );
-  }
-});
+  },
 
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  renderScene(route, navigator) {
+    var Component = route.component;
+    var navBar = route.navigationBar;
+    if (navBar) {
+        navBar = React.addons.cloneWithProps(navBar, {navigator, route});
+    }
+
+    return (
+        <View>
+          {navBar}
+          <Component {...route.passProps} navigator={navigator} route={route}/>
+        </View>
+    );
   },
 });
 

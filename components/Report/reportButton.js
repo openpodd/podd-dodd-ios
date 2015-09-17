@@ -37,7 +37,7 @@ class ReportButton extends Component {
         passProps: {
           closeModal: this.onClose.bind(this),
         }
-    })
+    });
   }
 
   onClose() {
@@ -49,7 +49,6 @@ class ReportButton extends Component {
 var styles = StyleSheet.create({
 
 	reportButtonContainer: {
-    flex: 0.2,
     padding: 10,
     backgroundColor: '#ddd',
     alignItems: 'center',

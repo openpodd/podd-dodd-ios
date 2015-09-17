@@ -12,22 +12,60 @@ var {
 
 var FeedItem = require('../components/Feed/feedItem');
 var CommentItem = require('../components/Comment/commentItem');
+var SupportForm = require('../components/Report/supportForm');
 
 class CommentView extends Component {
 
+  constructor(props) {
+    super(props);
+    this.closeSupportModalForm = this.closeSupportModalForm.bind(this);
+    this.state = {
+      showSupportForm: false,
+      selectingRowData: null,
+    }; 
+  }
+
   render() {
     return (
-      <ScrollView style={styles.scrollView}>
-        <CommentItem rowData='Comment 1'/>
-        <CommentItem rowData='Comment 2'/>
-        <CommentItem rowData='Comment 3'/>
-        <CommentItem rowData='Comment 4'/>
-      </ScrollView>
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+          <FeedItem rowData={this.props.rowData} onPressSupport={()=> {
+            this.setState({
+              showSupportForm: true,
+              selectingRowData: this.props.rowData,
+            })
+          }}/>
+
+          <CommentItem rowData={CommentFixture[0]}/>
+          <CommentItem rowData={CommentFixture[1]}/>
+          <CommentItem rowData={CommentFixture[2]}/>
+          <CommentItem rowData={CommentFixture[3]}/>
+        </ScrollView>
+
+        { this.state.showSupportForm ? 
+          <SupportForm 
+            rowData={this.state.selectingRowData}
+            onPressLike={this.closeSupportModalForm} 
+            onPressSupport={this.closeSupportModalForm} 
+            onPressComment={(rowData)=>{
+              this.closeSupportModalForm();
+            }}/> 
+          : null }
+      </View>
     );
+  }
+
+  closeSupportModalForm() {
+    this.setState({
+      showSupportForm: false,
+    });
   }
 };
 
 var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
 
   scrollView: {
     flex: 1,
@@ -43,4 +81,6 @@ var styles = StyleSheet.create({
   },
 });
 
+var CommentFixture = require('../fixures/comment');
 module.exports = CommentView;
+

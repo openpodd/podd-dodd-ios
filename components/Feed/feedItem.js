@@ -13,53 +13,64 @@ var {
 } = React;
 
 var Moment = require('moment');
-var CommentView = require('../../views/comment');
 
 class FeedItem extends Component {
-  
-  constructor(props) {
-    super(props);
-    this.didSelectRow = this.didSelectRow.bind(this);
-  }
 
   render() {
     return (
-      <TouchableHighlight
-        onPress={this.didSelectRow}
-        underlayColor={styles.rowPress.backgroundColor}>
-        <View style={styles.rowContainer}>
-          <View style={styles.rowHeader}>
-            <Text style={styles.bold}>{this.props.rowData.created_by.display_name}</Text>
-            <View style={styles.media}></View>
-          </View>
-          <View style={styles.rowDescription}>
-            <Text>{this.props.rowData.content}</Text>
-            <Text>{Moment(this.props.rowData.modified).fromNow()}</Text>
-          </View>
-          <View style={styles.rowSeparator}/>
+      <View style={styles.row}>
+        <Text style={styles.bold}>{this.props.rowData.created_by.display_name}</Text>
+        <View style={styles.media}></View>
+        <Text style={styles.text}>{Moment(this.props.rowData.modified).fromNow()}</Text>
+        <Text style={styles.text}>{this.props.rowData.content}</Text>
+
+        <View style={styles.score}>
+          <Text>21</Text>
+          <Text>ประสบด้วย</Text>
         </View>
-      </TouchableHighlight>
+        <View style={styles.score}>
+          <Text>53</Text>
+          <Text>ให้กำลังใจ</Text>
+        </View>
+
+        <TouchableHighlight
+          style={styles.supportButton}
+          onPress={this.onPressSupport.bind(this)}>
+          <Text>สนับสนุน</Text>
+        </TouchableHighlight>
+
+        <View style={styles.rowSeparator}/>
+
+        { this.props.modal ? 
+          <View style={styles.footer}>
+            <TouchableHighlight><Text>20 ความคิดเห็น</Text></TouchableHighlight>
+            <View style={styles.action}>
+              <TouchableHighlight><Text>Comment</Text></TouchableHighlight>
+              <TouchableHighlight><Text>Share</Text></TouchableHighlight>
+            </View>
+          </View>
+          : null }
+        <View style={styles.rowSeparator}/>
+     </View>
     );
   }
 
-  didSelectRow() {
-    this.props.navigator.push({
-      name: 'Comment View',
-      title: 'Comments',
-      component: CommentView,
-    });
+  onPressRow() {
+    if (this.props.onPressRow) {
+      this.props.onPressRow(this.props.rowData);
+    }
+  }
+
+  onPressSupport(rowData) {
+    if (this.props.onPressSupport) {
+      this.props.onPressSupport(this.props.rowData);
+    }
   }
 }
 
 var styles = StyleSheet.create({
-  rowContainer: {
-    flex: 1,
+  row: {
     backgroundColor: '#eee',
-  },
-
-  rowDescription: {
-    flex: 1,
-    margin: 10,
   },
 
   rowSeparator: {
@@ -73,12 +84,18 @@ var styles = StyleSheet.create({
   },
 
   bold: {
+    flex: 1,
     fontWeight: '700',
   },
 
-  media: {
-    backgroundColor: '#ccc',
+  text: {
     flex: 1,
+    fontWeight: '100',
+  },
+
+  media: {
+    flex: 1,
+    backgroundColor: '#ccc',
     marginHorizontal: 10,
     height: 200,
   },

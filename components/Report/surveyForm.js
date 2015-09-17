@@ -10,6 +10,7 @@ var {
   View,
   Text,
   TouchableHighlight,
+  Navigator,
 } = React;
 
 var SurveyForm = React.createClass({
@@ -38,7 +39,17 @@ var SurveyForm = React.createClass({
         </TouchableHighlight>
 
         { this.state.showConfirmation ? 
-          <ConfirmationForm/> :
+          <ConfirmationForm
+            onConfirm={()=>{
+              this.props.navigator.sceneConfigs = Navigator.SceneConfigs.FloatFromBottom;
+              console.log('navigator ' + this.props.navigator.sceneConfigs);
+              this.props.navigator.popToTop();
+            }}
+            onCancel={()=>{
+              this.setState({
+                showConfirmation: false,
+              });
+            }}/> :
           null }
       </View>
     );

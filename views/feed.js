@@ -14,48 +14,92 @@ var Moment = require('moment');
 var FeedItem = require('../components/Feed/feedItem');
 var ReportFilterBox = require('../components/Report/reportFilter');
 var ReportButton = require('../components/Report/reportButton');
+var CommentView = require('../views/comment');
+var SupportForm = require('../components/Report/supportForm');
 
 class FeedContainerView extends Component {
 
   constructor(props) {
     super(props);
-    var dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => ri !== r2}); 
     this.state = {
-      dataSource: dataSource,
+      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => ri !== r2}),
       loaded: false,
       fetchURL: fetchURL,
+      showSupportForm: false,
+      selectingRowData: null,
     };
-    this.renderRow = this.renderRow.bind(this);
   }
 
   componentWillMount() {
     this.executeQuery()
+    this.closeSupportModalForm = this.closeSupportModalForm.bind(this);
+    this.presentCommentView = this.presentCommentView.bind(this);
   }
 
   render() {
     return (
-      <View style={styles.navigationContentContainer}>
+      <View style={styles.container}>
         <ReportFilterBox/>
-        { this.state.loaded ? 
+        <ReportButton/>
+        <View style={styles.list}>
+          { this.state.loaded ? 
           this.renderListView() :  
           this.renderLoadingView()}
-        <ReportButton/>
+        </View> 
+
+        { this.state.showSupportForm ? 
+          <SupportForm 
+            rowData={this.state.selectingRowData}
+            onPressLike={this.closeSupportModalForm} 
+            onPressSupport={this.closeSupportModalForm} 
+            onPressComment={(rowData)=>{
+              this.closeSupportModalForm();
+              var context = this;
+              setTimeout(function() {
+                context.presentCommentView(rowData)
+              }, 500);
+            }}/> 
+          : null }
       </View>
     );
+  }
+
+  closeSupportModalForm() {
+    this.setState({
+      showSupportForm: false,
+    });
   }
   
   renderListView() {
     return (
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={(rowData)=>this.renderRow(rowData)} />
+        renderRow={this.renderRow.bind(this)} />
     );
   }
 
   renderRow(rowData) {
     return (
-      <FeedItem rowData={rowData} navigator={this.props.navigator} />
+      <TouchableHighlight
+        onPress={()=>this.presentCommentView(rowData)}>
+        <View>
+          <FeedItem modal rowData={rowData} onPressSupport={()=> {
+            console.log('show support form');
+            this.setState({
+              showSupportForm: true,
+              selectingRowData: rowData,
+            })
+          }}/>
+        </View>
+      </TouchableHighlight>
     );
+  }
+
+  presentCommentView(rowData) {
+    this.props.navigator.push({
+      component: CommentView,
+      passProps: {rowData: rowData},
+    });
   }
 
   renderLoadingView() {
@@ -67,32 +111,31 @@ class FeedContainerView extends Component {
   }
 
   executeQuery() {
-    fetch(this.state.fetchURL)
-      .then(response => response.json())
-      .then(json => {
-          this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(json.results),
-            loaded: true,
-          });
-        })
-      .catch(error =>  console.log('error ' + error));
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(FeedFixtures),
+      loaded: true,
+    });
   }
 }
 
 var styles = StyleSheet.create({
-  navigationContentContainer: {
-    flex: 1,
-    alignItems: 'stretch',
+  container: {
     backgroundColor: '#aaa',
     marginTop: 20,
   },
 
   loadingContainer: {
-    flex: 1,
     alignItems: 'center',
     backgroundColor: '#ccc',
+  },
+
+  list: {
+    flex: 1,
+    backgroundColor: '#999',
   },
 });
 
 var fetchURL = 'http://www.thaispendingwatch.com:8088/api/reports/';
+var FeedFixtures = require('../fixures/feed');
+
 module.exports = FeedContainerView;

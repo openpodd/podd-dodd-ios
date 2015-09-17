@@ -12,6 +12,7 @@ var {
   Text,
   TextInput,
   TouchableHighlight,
+  Navigator,
 } = React;
 
 var ImageAsset = require('../PhotoGallery/imageAsset');
