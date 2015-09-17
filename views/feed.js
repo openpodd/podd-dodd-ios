@@ -111,10 +111,15 @@ class FeedContainerView extends Component {
   }
 
   executeQuery() {
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(FeedFixtures),
-      loaded: true,
-    });
+    fetch(this.state.fetchURL)
+      .then(response => response.json())
+      .then(json => {
+          this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(json),
+            loaded: true,
+          });
+        })
+      .catch(error =>  console.log('error ' + error));
   }
 }
 
@@ -135,7 +140,5 @@ var styles = StyleSheet.create({
   },
 });
 
-var fetchURL = 'http://www.thaispendingwatch.com:8088/api/reports/';
-var FeedFixtures = require('../fixures/feed');
-
+var fetchURL = 'http://localhost:8888/';
 module.exports = FeedContainerView;

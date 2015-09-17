@@ -8,6 +8,7 @@ var {
   Component,
   Text,
   ScrollView,
+  ListView,
 } = React;
 
 var FeedItem = require('../components/Feed/feedItem');
@@ -20,9 +21,27 @@ class CommentView extends Component {
     super(props);
     this.closeSupportModalForm = this.closeSupportModalForm.bind(this);
     this.state = {
+      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => ri !== r2}),
       showSupportForm: false,
       selectingRowData: null,
+      fetchURL: fetchURL,
     }; 
+  }
+
+  componentWillMount() {
+    this.executeQuery();
+  }
+
+  executeQuery() {
+    fetch(this.state.fetchURL)
+      .then(response => response.json())
+      .then(json => {
+          this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(json),
+            loaded: true,
+          });
+        })
+      .catch(error =>  console.log('error ' + error));
   }
 
   render() {
@@ -36,10 +55,12 @@ class CommentView extends Component {
             })
           }}/>
 
-          <CommentItem rowData={CommentFixture[0]}/>
-          <CommentItem rowData={CommentFixture[1]}/>
-          <CommentItem rowData={CommentFixture[2]}/>
-          <CommentItem rowData={CommentFixture[3]}/>
+          <ListView
+            dataSource={this.state.dataSource}
+            renderRow={(rowData) => {
+              return (<CommentItem rowData={rowData}/>);
+            }} />
+          
         </ScrollView>
 
         { this.state.showSupportForm ? 
@@ -81,6 +102,5 @@ var styles = StyleSheet.create({
   },
 });
 
-var CommentFixture = require('../fixures/comment');
+var fetchURL = 'http://localhost:8888/report/1/comments';
 module.exports = CommentView;
-
