@@ -6,8 +6,13 @@
     "start": "node_modules/react-native/packager/packager.sh"
   },
   "dependencies": {
+    "es6-promise": "^1.0.0",
+    "events": "^1.0.2",
+    "flux": "^2.1.1",
     "gb-native-router": "^0.4.0",
     "moment": "^2.10.6",
+    "object-assign": "^1.0.0",
+    "react": "^0.13.3",
     "react-native": "^0.10.1"
   }
 }

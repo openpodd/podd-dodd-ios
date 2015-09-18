@@ -5,6 +5,8 @@ var React = require('react-native');
 var Dimensions = require('Dimensions');
 var {width, height} = Dimensions.get('window');
 
+var AppActions = require('../../actions/AppActions');
+
 var {
   StyleSheet,
   View,
@@ -23,7 +25,7 @@ var SupportForm = React.createClass({
 
           <TouchableHighlight 
             style={styles.button}
-            onPress={this.onPressSupport}>
+            onPress={this.onPressEncounter}>
             <Text>ประสบด้วย</Text>
           </TouchableHighlight>
 
@@ -43,12 +45,14 @@ var SupportForm = React.createClass({
     );
   },
 
-  onPressSupport: function() {
-    this.props.onPressSupport ? this.props.onPressSupport() : null;
+  onPressEncounter: function() {
+    this.props.onPressEncounter ? this.props.onPressEncounter() : null;
+    AppActions.encounterReport(this.props.rowData);
   },
 
   onPressLike: function() {
     this.props.onPressLike ? this.props.onPressLike() : null;
+    AppActions.likeReport(this.props.rowData);
   },
 
   onPressComment: function() {

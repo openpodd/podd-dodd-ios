@@ -15,6 +15,9 @@ var FeedItem = require('../components/Feed/feedItem');
 var CommentItem = require('../components/Comment/commentItem');
 var SupportForm = require('../components/Report/supportForm');
 
+var config = require('../../config.js');
+var AppStore = require('../../src/stores/AppStore');
+
 class CommentView extends Component {
 
   constructor(props) {
@@ -24,7 +27,7 @@ class CommentView extends Component {
       dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => ri !== r2}),
       showSupportForm: false,
       selectingRowData: null,
-      fetchURL: fetchURL,
+      fetchURL: config.development.comment_url,
     }; 
   }
 
@@ -33,15 +36,13 @@ class CommentView extends Component {
   }
 
   executeQuery() {
-    fetch(this.state.fetchURL)
-      .then(response => response.json())
-      .then(json => {
-          this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(json),
-            loaded: true,
-          });
-        })
-      .catch(error =>  console.log('error ' + error));
+    var _ = this;
+    AppStore.findComment('',function(json) { 
+      _.setState({
+        dataSource: _.state.dataSource.cloneWithRows(json),
+        loaded: true,
+      });
+    });
   }
 
   render() {
@@ -67,7 +68,7 @@ class CommentView extends Component {
           <SupportForm 
             rowData={this.state.selectingRowData}
             onPressLike={this.closeSupportModalForm} 
-            onPressSupport={this.closeSupportModalForm} 
+            onPressEncounter={this.closeSupportModalForm} 
             onPressComment={(rowData)=>{
               this.closeSupportModalForm();
             }}/> 
@@ -102,5 +103,4 @@ var styles = StyleSheet.create({
   },
 });
 
-var fetchURL = 'http://localhost:8888/report/1/comments';
 module.exports = CommentView;

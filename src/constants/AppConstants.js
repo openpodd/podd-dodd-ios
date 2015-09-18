@@ -1,0 +1,4 @@
+module.exports = {
+  LIKE_REPORT: 'LIKE_REPORT',
+  ENCOUNTER_REPORT: 'ENCOUNTER_REPORT'
+};

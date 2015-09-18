@@ -12,14 +12,25 @@ var {
   Component,
 } = React;
 
-var NearbyView = require('./views/nearby');
-var FeedContainerView = require('./views/feed');
+var NearbyView = require('./src/views/nearby');
+var FeedContainerView = require('./src/views/feed');
+var AppDispatcher = require('./src/dispatcher/AppDispatcher');
+var AppStore = require('./src/stores/AppStore');
 
 var PODDLive = React.createClass({
+
   getInitialState: function() {
     return {
       selectedTab: 'nearby',
     }
+  },
+
+  componentDidMount: function() {
+    AppStore.addChangeListener(this.onChange);
+  },
+
+  onChange: function() {
+    console.log('onChange');
   },
 
   render: function() {
@@ -39,12 +50,7 @@ var PODDLive = React.createClass({
           selected={this.state.selectedTab === 'nearby'}>
 
           <Navigator
-            configureScene={(route) => {
-              if (route.sceneConfig) {
-                return route.sceneConfig;
-              }
-              return Navigator.SceneConfigs.FloatFromRight;
-            }}        
+            configureScene={this.configureScene}        
             initialRoute={{
               name: 'Nearby',
               component: NearbyView,
@@ -62,12 +68,7 @@ var PODDLive = React.createClass({
           }}>
 
           <Navigator
-            configureScene={(route) => {
-              if (route.sceneConfig) {
-                return route.sceneConfig;
-              }
-              return Navigator.SceneConfigs.FloatFromRight;
-            }}        
+            configureScene={this.configureScene}        
             initialRoute={{
               name: 'Feed',
               component: FeedContainerView,
@@ -98,6 +99,13 @@ var PODDLive = React.createClass({
         </TabBarIOS.Item>
       </TabBarIOS>
     );
+  },
+
+  configureScene(route) {
+    if (route.sceneConfig) {
+      return route.sceneConfig;
+    }
+    return Navigator.SceneConfigs.FloatFromRight; 
   },
 
   renderScene(route, navigator) {

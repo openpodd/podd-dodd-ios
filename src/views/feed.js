@@ -17,6 +17,8 @@ var ReportButton = require('../components/Report/reportButton');
 var CommentView = require('../views/comment');
 var SupportForm = require('../components/Report/supportForm');
 
+var AppStore = require('../../src/stores/AppStore');
+
 class FeedContainerView extends Component {
 
   constructor(props) {
@@ -24,7 +26,6 @@ class FeedContainerView extends Component {
     this.state = {
       dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => ri !== r2}),
       loaded: false,
-      fetchURL: fetchURL,
       showSupportForm: false,
       selectingRowData: null,
     };
@@ -47,11 +48,12 @@ class FeedContainerView extends Component {
           this.renderLoadingView()}
         </View> 
 
+
         { this.state.showSupportForm ? 
           <SupportForm 
             rowData={this.state.selectingRowData}
             onPressLike={this.closeSupportModalForm} 
-            onPressSupport={this.closeSupportModalForm} 
+            onPressEncounter={this.closeSupportModalForm} 
             onPressComment={(rowData)=>{
               this.closeSupportModalForm();
               var context = this;
@@ -84,7 +86,6 @@ class FeedContainerView extends Component {
         onPress={()=>this.presentCommentView(rowData)}>
         <View>
           <FeedItem modal rowData={rowData} onPressSupport={()=> {
-            console.log('show support form');
             this.setState({
               showSupportForm: true,
               selectingRowData: rowData,
@@ -111,15 +112,12 @@ class FeedContainerView extends Component {
   }
 
   executeQuery() {
-    fetch(this.state.fetchURL)
-      .then(response => response.json())
-      .then(json => {
-          this.setState({
-            dataSource: this.state.dataSource.cloneWithRows(json),
-            loaded: true,
-          });
-        })
-      .catch(error =>  console.log('error ' + error));
+    AppStore.findAll((json)=>{
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(json),
+        loaded: true,
+      });
+    })
   }
 }
 
@@ -140,5 +138,4 @@ var styles = StyleSheet.create({
   },
 });
 
-var fetchURL = 'http://localhost:8888/';
 module.exports = FeedContainerView;
