@@ -13,40 +13,48 @@ var {
 } = React;
 
 var Moment = require('moment');
-
+var FeedPhotoGallery = require('./feedPhotoGallery');
 class FeedItem extends Component {
 
   render() {
     return (
       <View style={styles.row}>
-        <Text style={styles.bold}>{this.props.rowData.created_by.display_name}</Text>
-        <View style={styles.media}></View>
-        <Text style={styles.text}>{Moment(this.props.rowData.modified).fromNow()}</Text>
-        <Text style={styles.text}>{this.props.rowData.content}</Text>
-
-        <View style={styles.score}>
-          <Text>{this.props.rowData.encounter_count}</Text>
-          <Text>ประสบด้วย</Text>
+        <View style={styles.media}>
+          <FeedPhotoGallery report={this.props.rowData}/>
         </View>
-        <View style={styles.score}>
-          <Text>{this.props.rowData.like_count || '0' }</Text>
-          <Text>ให้กำลังใจ</Text>
+        <View style={styles.header}>
+          <Text style={styles.bold}>{this.props.rowData.created_by.display_name}</Text>
+          <Text style={styles.text}>{Moment(this.props.rowData.modified).fromNow()}</Text>
+          <Text style={styles.text}>{this.props.rowData.content}</Text>
         </View>
 
-        <TouchableHighlight
-          style={styles.supportButton}
-          onPress={this.onPressSupport.bind(this)}>
-          <Text>สนับสนุน</Text>
-        </TouchableHighlight>
+        <View style={styles.supportToolbar}>
+          <View style={styles.supportCount}>
+            <Text>{this.props.rowData.encounter_count}</Text>
+            <Text>ประสบด้วย</Text>
+            <Text>{this.props.rowData.like_count || '0' }</Text>
+            <Text>ให้กำลังใจ</Text>
+          </View>
 
-        <View style={styles.rowSeparator}/>
+          <TouchableHighlight
+            style={styles.supportButton}
+            onPress={this.onPressSupport.bind(this)}>
+            <Text style={styles.supportButtonTitle}>สนับสนุน</Text>
+          </TouchableHighlight>
+        </View>
 
         { this.props.modal ? 
-          <View style={styles.footer}>
-            <TouchableHighlight><Text>20 ความคิดเห็น</Text></TouchableHighlight>
-            <View style={styles.action}>
-              <TouchableHighlight><Text>Comment</Text></TouchableHighlight>
-              <TouchableHighlight><Text>Share</Text></TouchableHighlight>
+          <View style={styles.commentToolbar}>
+            <TouchableHighlight style={styles.commentCount}>
+              <Text>{this.props.rowData.comment_count || 0} ความคิดเห็น</Text>
+            </TouchableHighlight>
+            <View style={styles.commentAction}>
+              <TouchableHighlight style={styles.action}>
+                <Text>Comment</Text>
+              </TouchableHighlight>
+              <TouchableHighlight style={styles.action}>
+                <Text>Share</Text>
+              </TouchableHighlight>
             </View>
           </View>
           : null }
@@ -71,33 +79,73 @@ class FeedItem extends Component {
 var styles = StyleSheet.create({
   row: {
     backgroundColor: '#eee',
-  },
-
-  rowSeparator: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#888',
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
 
   rowPress: {
     backgroundColor: '##fff',
   },
 
+  header: {
+    alignItems: 'stretch',
+  },
+
+  rowSeparator: {
+    height: 1,
+    backgroundColor: '#888',
+    opacity: 0.5,
+  },
+
   bold: {
-    flex: 1,
     fontWeight: '700',
   },
 
   text: {
-    flex: 1,
     fontWeight: '100',
   },
 
-  media: {
+  supportToolbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+
+  supportCount: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 2,
+  },
+
+  supportButton: {
     flex: 1,
-    backgroundColor: '#ccc',
-    marginHorizontal: 10,
-    height: 200,
+    backgroundColor: '#999',
+    height: 44,
+    alignItems: 'center',
+  },
+
+  supportButtonTitle: {
+    fontWeight: '700',
+  },
+
+  commentToolbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  commentCount: {
+    flexDirection: 'row',
+    flex: 1,
+  },
+
+  commentAction: {
+    height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  action: {
+    marginLeft: 20,
   },
 });
 

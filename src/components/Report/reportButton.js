@@ -45,11 +45,11 @@ class ReportButton extends Component {
 }
 
 var styles = StyleSheet.create({
-
 	reportButtonContainer: {
     padding: 10,
     backgroundColor: '#ddd',
     alignItems: 'center',
+    flex: 1,
   },
 
   reportButton: {

@@ -62,7 +62,7 @@ var ReportCollectionStore = assign({}, EventEmitter.prototype, {
       var comment = properties[AppConstants.REPORT_ACTION.COMMENT];
       if (isLiked) ReportCollectionStore.incrementLikeCount(reportId);
       if (isEncounter) ReportCollectionStore.incrementEncounterCount(reportId);
-      if (comment !== null) ReportCollectionStore.addComment(id, properties);
+      if (comment !== null) ReportCollectionStore.addComment(reportId, properties);
     } else {
       // TODO: Send to NetworkRequestQueue
       console.warn('Cannot find report id ' + id);

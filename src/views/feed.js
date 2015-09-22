@@ -1,6 +1,12 @@
 'use strict';
 
 var React = require('react-native');
+var Dimensions = require('Dimensions');
+var {width, height} = Dimensions.get('window');
+var tabBarHeight = 48;
+var navigationBarHeight = 64;
+var reportButtonHeight = 100;
+var contentHeight = height - navigationBarHeight - tabBarHeight - reportButtonHeight;
 var {
   StyleSheet,
   View,
@@ -11,6 +17,7 @@ var {
 } = React;
 
 var Moment = require('moment');
+
 var FeedItem = require('../components/Feed/feedItem');
 var ReportFilterBox = require('../components/Report/reportFilter');
 var ReportButton = require('../components/Report/reportButton');
@@ -24,7 +31,7 @@ class FeedContainerView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id}),
       loaded: false,
       showSupportForm: false,
       selectingRowData: null,
@@ -41,26 +48,18 @@ class FeedContainerView extends Component {
 
   componentWillUnmount() {
     ReportCollectionStore.removeChangeListener(this.executeQuery);
-    console.log('unmount feed');
   }
 
   render() {
     return (
       <View style={styles.container}>
         <ReportFilterBox/>
+        <View style={styles.content}>
+          { this.state.loaded
+          ? this.renderListView()
+          : this.renderLoadingView() }
+        </View>
         <ReportButton navigator={this.props.navigator}/>
-        <View style={styles.list}>
-          { this.state.loaded ? 
-          this.renderListView() :  
-          this.renderLoadingView()}
-        </View> 
-
-        { this.state.showSupportForm ? 
-          <SupportForm 
-            rowData={this.state.selectingRowData}
-            onDismiss={this.closeSupportModalForm}
-            onSubmit={this.closeSupportModalForm}/> 
-          : null }
       </View>
     );
   }
@@ -73,22 +72,36 @@ class FeedContainerView extends Component {
   
   renderListView() {
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow.bind(this)} />
+      <View style={styles.content}>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderRow.bind(this)} />
+          
+        { this.state.showSupportForm ? 
+          <SupportForm 
+            rowData={this.state.selectingRowData}
+            onDismiss={this.closeSupportModalForm}
+            onSubmit={this.closeSupportModalForm}/> 
+          : null }
+      </View>
     );
   }
 
-  renderRow(rowData) {
+  renderRow(rowData, sectionID, rowID) {
     return (
-      <TouchableHighlight
-        onPress={()=>this.presentCommentView(rowData)}>
+
+      <TouchableHighlight 
+        onPress={()=>this.presentCommentView(rowData)}
+        underlayColor='#999'>
         <View>
-          <FeedItem modal rowData={rowData} onPressSupport={()=> {
-            this.setState({
-              showSupportForm: true,
-              selectingRowData: rowData,
-            })
+          <FeedItem 
+            modal 
+            rowData={rowData} 
+            onPressSupport={()=> {
+              this.setState({
+                showSupportForm: true,
+                selectingRowData: rowData,
+              })
           }}/>
         </View>
       </TouchableHighlight>
@@ -113,7 +126,6 @@ class FeedContainerView extends Component {
   executeQuery() {
     var _this = this;
     ReportCollectionStore.findAll(function(items){
-      console.log('feed query via EventEmitter ' + items['373'].like_count);
       _this.setState({
         dataSource: _this.state.dataSource.cloneWithRows(items),
         loaded: true,
@@ -124,8 +136,8 @@ class FeedContainerView extends Component {
 
 var styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: '#aaa',
-    marginTop: 20,
   },
 
   loadingContainer: {
@@ -133,8 +145,8 @@ var styles = StyleSheet.create({
     backgroundColor: '#ccc',
   },
 
-  list: {
-    flex: 1,
+  content: {
+    height: contentHeight,
     backgroundColor: '#999',
   },
 });
