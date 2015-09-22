@@ -30,7 +30,6 @@ class ReportButton extends Component {
   }
 
   onPress() {
-    console.log('press report!');
     this.props.navigator.push({
         component: ReportFormContainer,
         sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
@@ -41,7 +40,6 @@ class ReportButton extends Component {
   }
 
   onClose() {
-    console.log('close report!');
     this.props.navigator.pop();
   }
 }

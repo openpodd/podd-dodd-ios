@@ -16,31 +16,38 @@ var CommentItem = require('../components/Comment/commentItem');
 var SupportForm = require('../components/Report/supportForm');
 
 var config = require('../../config.js');
-var AppStore = require('../../src/stores/AppStore');
+var ReportCollectionStore = require('../../src/stores/ReportCollectionStore');
 
 class CommentView extends Component {
-
   constructor(props) {
     super(props);
     this.closeSupportModalForm = this.closeSupportModalForm.bind(this);
+    this.executeQuery = this.executeQuery.bind(this);
     this.state = {
-      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => ri !== r2}),
+      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
       showSupportForm: false,
-      selectingRowData: null,
-      fetchURL: config.development.comment_url,
+      report: this.props.rowData,
     }; 
   }
 
   componentWillMount() {
     this.executeQuery();
+    ReportCollectionStore.addChangeListener(this.executeQuery);
+  }
+
+  componentWillUnmount() {
+    ReportCollectionStore.removeChangeListener(this.executeQuery);
   }
 
   executeQuery() {
-    var _ = this;
-    AppStore.findComment('',function(json) { 
-      _.setState({
-        dataSource: _.state.dataSource.cloneWithRows(json),
+    var thisObject = this;
+    ReportCollectionStore.findComment(thisObject.props.rowData.id, function(json) { 
+      var report = ReportCollectionStore.find(thisObject.props.rowData.id);
+      console.log('comment query via EventEmitter ' + report.like_count);
+      thisObject.setState({
+        dataSource: thisObject.state.dataSource.cloneWithRows(json),
         loaded: true,
+        report: report,
       });
     });
   }
@@ -49,10 +56,9 @@ class CommentView extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.scrollView}>
-          <FeedItem rowData={this.props.rowData} onPressSupport={()=> {
+          <FeedItem rowData={this.state.report} onPressSupport={()=> {
             this.setState({
               showSupportForm: true,
-              selectingRowData: this.props.rowData,
             })
           }}/>
 
@@ -60,18 +66,15 @@ class CommentView extends Component {
             dataSource={this.state.dataSource}
             renderRow={(rowData) => {
               return (<CommentItem rowData={rowData}/>);
-            }} />
+            }}/>
           
         </ScrollView>
 
         { this.state.showSupportForm ? 
           <SupportForm 
-            rowData={this.state.selectingRowData}
-            onPressLike={this.closeSupportModalForm} 
-            onPressEncounter={this.closeSupportModalForm} 
-            onPressComment={(rowData)=>{
-              this.closeSupportModalForm();
-            }}/> 
+            rowData={this.props.rowData}
+            onDismiss={this.closeSupportModalForm} 
+            onSubmit={this.closeSupportModalForm}/> 
           : null }
       </View>
     );

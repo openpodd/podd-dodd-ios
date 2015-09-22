@@ -6,39 +6,75 @@ var Dimensions = require('Dimensions');
 var {width, height} = Dimensions.get('window');
 
 var AppActions = require('../../actions/AppActions');
+var AppConstants = require('../../constants/AppConstants');
 
 var {
   StyleSheet,
   View,
   Text,
+  TextInput,
   TouchableHighlight,
   ScrollView,
 } = React;
 
+var IS_LIKED = AppConstants.REPORT_ACTION.IS_LIKED;
+var IS_ENCOUNTERED = AppConstants.REPORT_ACTION.IS_ENCOUNTERED;
+var COMMENT = AppConstants.REPORT_ACTION.COMMENT;
+
 var SupportForm = React.createClass({
+
+  getInitialState: function() {
+    return ({
+      IS_LIKED: null,
+      IS_ENCOUNTERED: null,
+      COMMENT: null,
+    });
+  },
+
   render: function() {
     return (
       <View style={styles.modalContainer}>
         <View style={styles.modalUnderlay}/>
+
+        <TouchableHighlight
+          style={styles.dismissButton}
+          onPress={this.onDismiss}>
+          <Text>close</Text>
+        </TouchableHighlight>
+
         <ScrollView style={styles.modal}>
           <Text>Confirm?</Text>
 
           <TouchableHighlight 
             style={styles.button}
             onPress={this.onPressEncounter}>
-            <Text>ประสบด้วย</Text>
+            { this.state.IS_ENCOUNTERED
+              ? <Text>ประสบด้วย (selected)</Text>
+              : <Text>ประสบด้วย</Text>}
           </TouchableHighlight>
 
           <TouchableHighlight 
             style={styles.button}
             onPress={this.onPressLike}>
-            <Text>ให้กำลังใจ</Text>
+            { this.state.IS_LIKED === false || this.state.IS_LIKED === null
+              ? <Text>ให้กำลังใจ</Text>
+              : <Text>ให้กำลังใจ (selected)</Text>}
           </TouchableHighlight>
 
+          <TextInput
+            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+            onChangeText={(comment) => this.setState({
+              COMMENT: comment,
+            })}
+            placeholder='แสดงความคิดเห็น'
+            multiline={true}
+            value={this.state.comment}
+          />
+
           <TouchableHighlight 
-            style={styles.commentButton}
-            onPress={this.onPressComment}>
-            <Text>แสดงความคิดเห็น</Text>
+            style={styles.submitButton}
+            onPress={this.onPressSubmit}>
+            <Text>ยืนยัน</Text>
           </TouchableHighlight>
         </ScrollView>
       </View>
@@ -46,17 +82,25 @@ var SupportForm = React.createClass({
   },
 
   onPressEncounter: function() {
-    this.props.onPressEncounter ? this.props.onPressEncounter() : null;
-    AppActions.encounterReport(this.props.rowData);
+    this.setState({
+      IS_ENCOUNTERED: !this.state.IS_ENCOUNTERED,
+    });
   },
 
   onPressLike: function() {
-    this.props.onPressLike ? this.props.onPressLike() : null;
-    AppActions.likeReport(this.props.rowData);
+    this.setState({
+      IS_LIKED: !this.state.IS_LIKED,
+    });
   },
 
-  onPressComment: function() {
-    this.props.onPressComment ? this.props.onPressComment(this.props.rowData) : null;
+  onPressSubmit: function() {
+    AppActions.addComment(this.props.rowData.id, this.state);
+    this.setState(this.getInitialState());
+    this.props.onSubmit();
+  },
+
+  onDismiss: function() {
+    this.props.onDismiss();
   },
 });
 
@@ -105,6 +149,18 @@ var styles = StyleSheet.create({
     backgroundColor: '#eee',
     alignItems: 'center',
     height: 44,
+  },
+
+  submitButton: {
+    backgroundColor: '#777',
+    color: '#fff',
+    marginVertical: 10,
+    height: 44,
+  },
+
+  dismissButton: {
+    backgroundColor: '#888',
+    height: 32,
   },
 });
 

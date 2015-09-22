@@ -17,14 +17,14 @@ var ReportButton = require('../components/Report/reportButton');
 var CommentView = require('../views/comment');
 var SupportForm = require('../components/Report/supportForm');
 
-var AppStore = require('../../src/stores/AppStore');
+var ReportCollectionStore = require('../../src/stores/ReportCollectionStore');
 
 class FeedContainerView extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => ri !== r2}),
+      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
       loaded: false,
       showSupportForm: false,
       selectingRowData: null,
@@ -35,32 +35,31 @@ class FeedContainerView extends Component {
     this.executeQuery()
     this.closeSupportModalForm = this.closeSupportModalForm.bind(this);
     this.presentCommentView = this.presentCommentView.bind(this);
+    this.executeQuery = this.executeQuery.bind(this);
+    ReportCollectionStore.addChangeListener(this.executeQuery);
+  }
+
+  componentWillUnmount() {
+    ReportCollectionStore.removeChangeListener(this.executeQuery);
+    console.log('unmount feed');
   }
 
   render() {
     return (
       <View style={styles.container}>
         <ReportFilterBox/>
-        <ReportButton/>
+        <ReportButton navigator={this.props.navigator}/>
         <View style={styles.list}>
           { this.state.loaded ? 
           this.renderListView() :  
           this.renderLoadingView()}
         </View> 
 
-
         { this.state.showSupportForm ? 
           <SupportForm 
             rowData={this.state.selectingRowData}
-            onPressLike={this.closeSupportModalForm} 
-            onPressEncounter={this.closeSupportModalForm} 
-            onPressComment={(rowData)=>{
-              this.closeSupportModalForm();
-              var context = this;
-              setTimeout(function() {
-                context.presentCommentView(rowData)
-              }, 500);
-            }}/> 
+            onDismiss={this.closeSupportModalForm}
+            onSubmit={this.closeSupportModalForm}/> 
           : null }
       </View>
     );
@@ -112,12 +111,14 @@ class FeedContainerView extends Component {
   }
 
   executeQuery() {
-    AppStore.findAll((json)=>{
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(json),
+    var _this = this;
+    ReportCollectionStore.findAll(function(items){
+      console.log('feed query via EventEmitter ' + items['373'].like_count);
+      _this.setState({
+        dataSource: _this.state.dataSource.cloneWithRows(items),
         loaded: true,
       });
-    })
+    });
   }
 }
 

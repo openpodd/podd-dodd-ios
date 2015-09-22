@@ -14,8 +14,7 @@ var {
 
 var NearbyView = require('./src/views/nearby');
 var FeedContainerView = require('./src/views/feed');
-var AppDispatcher = require('./src/dispatcher/AppDispatcher');
-var AppStore = require('./src/stores/AppStore');
+var ReportCollectionStore = require('./src/stores/ReportCollectionStore');
 
 var PODDLive = React.createClass({
 
@@ -23,14 +22,6 @@ var PODDLive = React.createClass({
     return {
       selectedTab: 'nearby',
     }
-  },
-
-  componentDidMount: function() {
-    AppStore.addChangeListener(this.onChange);
-  },
-
-  onChange: function() {
-    console.log('onChange');
   },
 
   render: function() {

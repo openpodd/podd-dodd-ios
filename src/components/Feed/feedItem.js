@@ -25,11 +25,11 @@ class FeedItem extends Component {
         <Text style={styles.text}>{this.props.rowData.content}</Text>
 
         <View style={styles.score}>
-          <Text>21</Text>
+          <Text>{this.props.rowData.encounter_count}</Text>
           <Text>ประสบด้วย</Text>
         </View>
         <View style={styles.score}>
-          <Text>53</Text>
+          <Text>{this.props.rowData.like_count || '0' }</Text>
           <Text>ให้กำลังใจ</Text>
         </View>
 
