@@ -2,19 +2,13 @@ var AppDispatcher = require('../dispatcher/AppDispatcher');
 var AppConstants = require('../constants/AppConstants');
 
 var AppActions = {
-  likeReport: function(report){
+  addComment: function(id, form) {
     AppDispatcher.handleViewAction({
-      actionType:AppConstants.LIKE_REPORT,
-      item: report
-    })
-  },
-
-  encounterReport: function(report) {
-    AppDispatcher.handleViewAction({
-      actionType:AppConstants.ENCOUNTER_REPORT,
-      item: report
-    });
-  },
+      actionType:AppConstants.COMMENT_REPORT,
+      id: id,
+      properties: form,
+    }); 
+  }
 }
 
 module.exports = AppActions
