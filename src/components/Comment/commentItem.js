@@ -17,9 +17,12 @@ class CommentItem extends Component {
     return (
       <TouchableHighlight
         style={styles.commentItem}
-        onPress={this.props.onSelectComment}>
+        onPress={this.props.onSelectComment}
+        underlayColor='#eee'>
         <View style={styles.commentBackground}>
-          <Text>{this.props.rowData}</Text>
+          <Text style={styles.bold}>{this.props.rowData.created_by.display_name}</Text>
+          <Text style={styles.text}>{this.props.rowData.comment}</Text>
+          <Text style={styles.text}>{Moment(this.props.rowData.created).fromNow()}</Text>
         </View>
       </TouchableHighlight>
     );
@@ -29,12 +32,24 @@ class CommentItem extends Component {
 var styles = StyleSheet.create({
   commentItem: {
     flex: 1,
+    marginBottom: 2,
   },
 
   commentBackground: {
-    backgroundColor: '#aaa',
-    height: 44,
-  }
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+
+  bold: {
+    fontWeight: '700',
+    flex: 1,
+    marginBottom: 5,
+  },
+
+  text: {
+    fontWeight: '100',
+    flex: 1,
+  },
 });
 
 module.exports = CommentItem;

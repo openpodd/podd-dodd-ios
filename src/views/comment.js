@@ -7,12 +7,22 @@ var {
   TouchableHighlight,
   Component,
   Text,
+  TextInput,
   ScrollView,
   ListView,
 } = React;
 
+var Dimensions = require('Dimensions');
+var {width, height} = Dimensions.get('window');
+var tabBarHeight = 48;
+var navigationBarHeight = 64;
+var contentHeight = height - navigationBarHeight - tabBarHeight;
+
+var Moment = require('moment');
+
 var FeedItem = require('../components/Feed/feedItem');
 var CommentItem = require('../components/Comment/commentItem');
+var CommentBox = require('../components/Comment/commentBox');
 var SupportForm = require('../components/Report/supportForm');
 
 var config = require('../../config.js');
@@ -27,6 +37,7 @@ class CommentView extends Component {
       dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
       showSupportForm: false,
       report: this.props.rowData,
+      comment: null,
     }; 
   }
 
@@ -54,28 +65,31 @@ class CommentView extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ScrollView style={styles.scrollView}>
-          <FeedItem rowData={this.state.report} onPressSupport={()=> {
-            this.setState({
-              showSupportForm: true,
-            })
+      <View style={[styles.container,{height:contentHeight}]}>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderHeader={()=>{
+            return (
+              <FeedItem rowData={this.state.report} onPressSupport={()=> {
+                this.setState({
+                  showSupportForm: true,
+                })
+              }}/> 
+            );
+          }}
+          renderRow={(rowData) => {
+            return (
+              <CommentItem rowData={rowData}/>
+            );
           }}/>
 
-          <ListView
-            dataSource={this.state.dataSource}
-            renderRow={(rowData) => {
-              return (<CommentItem rowData={rowData}/>);
-            }}/>
-          
-        </ScrollView>
-
-        { this.state.showSupportForm ? 
-          <SupportForm 
+      <CommentBox/>
+      { this.state.showSupportForm
+        ? <SupportForm 
             rowData={this.props.rowData}
             onDismiss={this.closeSupportModalForm} 
             onSubmit={this.closeSupportModalForm}/> 
-          : null }
+        : null } 
       </View>
     );
   }
@@ -90,6 +104,7 @@ class CommentView extends Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: navigationBarHeight,
   },
 
   scrollView: {
@@ -104,6 +119,8 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'green',
   },
+
+  
 });
 
 module.exports = CommentView;
