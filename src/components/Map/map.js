@@ -6,20 +6,31 @@ var {
   StyleSheet,
   View,
   Text,
+  MapView,
   Component,
 } = React;
 
-class MapView extends Component {
+class Map extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mapRegion: null,
+      mapRegionInput: null,
+      annotations: null,
+      isFirstLoad: true,
+    };
+  }
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Show current locaiton</Text>
-      </View>
+      <MapView
+        style={styles.container}
+        region={this.state.mapRegion || undefined}
+        annotations={this.state.annotations || undefined}
+      />
     );
   }
 };
-
 
 var styles = StyleSheet.create({
   container: {
@@ -29,4 +40,4 @@ var styles = StyleSheet.create({
 });
 
 
-module.exports = MapView;
+module.exports = Map;

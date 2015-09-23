@@ -1,6 +1,9 @@
 'use strict';
 
 var React = require('react-native');
+var Dimensions = require('Dimensions');
+var {width, height} = Dimensions.get('window');
+
 var {
   StyleSheet,
   View,
@@ -11,15 +14,13 @@ var {
 
 var ReportMap = require('../components/ReportMap/reportMap');
 var ReportFilterBox = require('../components/Report/reportFilter');
-var ReportButton = require('../components/Report/reportButton');
 
 class NearbyView extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ReportFilterBox/>
+        <ReportFilterBox navigator={this.props.navigator}/>
         <ReportMap/>
-        <ReportButton navigator={this.props.navigator}/>
       </View>
     );
   }
@@ -29,8 +30,8 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
-    marginTop: 20,
     backgroundColor: '#aaa',
+    height: height,
   },
 });
 
