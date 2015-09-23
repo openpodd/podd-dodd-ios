@@ -5,8 +5,7 @@ var Dimensions = require('Dimensions');
 var {width, height} = Dimensions.get('window');
 var tabBarHeight = 48;
 var navigationBarHeight = 64;
-var reportButtonHeight = 100;
-var contentHeight = height - navigationBarHeight - tabBarHeight - reportButtonHeight;
+var contentHeight = height - navigationBarHeight - tabBarHeight;
 var {
   StyleSheet,
   View,
@@ -59,7 +58,6 @@ class FeedContainerView extends Component {
           ? this.renderListView()
           : this.renderLoadingView() }
         </View>
-        <ReportButton navigator={this.props.navigator}/>
       </View>
     );
   }
@@ -92,7 +90,7 @@ class FeedContainerView extends Component {
 
       <TouchableHighlight 
         onPress={()=>this.presentCommentView(rowData)}
-        underlayColor='#999'>
+        underlayColor='#eee'>
         <View>
           <FeedItem 
             modal 
@@ -147,7 +145,7 @@ var styles = StyleSheet.create({
 
   content: {
     height: contentHeight,
-    backgroundColor: '#999',
+    backgroundColor: '#eee',
   },
 });
 

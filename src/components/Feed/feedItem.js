@@ -78,13 +78,13 @@ class FeedItem extends Component {
 
 var styles = StyleSheet.create({
   row: {
-    backgroundColor: '#eee',
+    backgroundColor: '#fff',
     paddingHorizontal: 10,
     marginBottom: 20,
   },
 
-  rowPress: {
-    backgroundColor: '##fff',
+  media: {
+    marginVertical: 10,
   },
 
   header: {

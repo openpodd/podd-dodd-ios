@@ -16,11 +16,13 @@ var Dimensions = require('Dimensions');
 var {width, height} = Dimensions.get('window');
 var tabBarHeight = 48;
 var navigationBarHeight = 64;
-var contentHeight = height - navigationBarHeight - tabBarHeight;
+var commentBoxHeight = 44;
+var contentHeight = height - navigationBarHeight - tabBarHeight - commentBoxHeight;
 
 var Moment = require('moment');
 
 var FeedItem = require('../components/Feed/feedItem');
+var ReportFilterBox = require('../components/Report/reportFilter');
 var CommentItem = require('../components/Comment/commentItem');
 var CommentBox = require('../components/Comment/commentBox');
 var SupportForm = require('../components/Report/supportForm');
@@ -65,31 +67,35 @@ class CommentView extends Component {
 
   render() {
     return (
-      <View style={[styles.container,{height:contentHeight}]}>
-        <ListView
-          dataSource={this.state.dataSource}
-          renderHeader={()=>{
-            return (
-              <FeedItem rowData={this.state.report} onPressSupport={()=> {
-                this.setState({
-                  showSupportForm: true,
-                })
-              }}/> 
-            );
-          }}
-          renderRow={(rowData) => {
-            return (
-              <CommentItem rowData={rowData}/>
-            );
-          }}/>
-
-      <CommentBox/>
-      { this.state.showSupportForm
-        ? <SupportForm 
-            rowData={this.props.rowData}
-            onDismiss={this.closeSupportModalForm} 
-            onSubmit={this.closeSupportModalForm}/> 
-        : null } 
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>รายงาน</Text>
+        </View>
+        <View style={{height:contentHeight}}>
+          <ListView
+            dataSource={this.state.dataSource}
+            renderHeader={()=>{
+              return (
+                <FeedItem rowData={this.state.report} onPressSupport={()=> {
+                  this.setState({
+                    showSupportForm: true,
+                  })
+                }}/> 
+              );
+            }}
+            renderRow={(rowData) => {
+              return (
+                <CommentItem rowData={rowData}/>
+              );
+            }}/>
+        </View>
+        <CommentBox/>
+        { this.state.showSupportForm
+          ? <SupportForm 
+              rowData={this.props.rowData}
+              onDismiss={this.closeSupportModalForm} 
+              onSubmit={this.closeSupportModalForm}/> 
+          : null } 
       </View>
     );
   }
@@ -104,7 +110,23 @@ class CommentView extends Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: navigationBarHeight,
+  },
+
+  headerContainer: {
+    flex: 1,
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    height: navigationBarHeight,
+    backgroundColor: '#333',
+    paddingTop: 20,
+  },
+
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '100',
+    textAlign: 'center',
+    alignItems: 'center',
+    color: '#fff',
   },
 
   scrollView: {
@@ -113,13 +135,6 @@ var styles = StyleSheet.create({
     marginBottom: 50,
     backgroundColor: '#fff',
   },
-
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: 'green',
-  },
-
   
 });
 

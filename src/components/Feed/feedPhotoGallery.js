@@ -17,10 +17,16 @@ var FeedPhotoGallery = React.createClass({
       <View style={styles.container}>
         <Image
           style={styles.photo}
-          source={{uri: 'http://thaispendingwatch.s3.amazonaws.com/JPEG_20150122_115551_-578926518.jpg'}} />
+          source={{uri: this.representPhoto()}} />
       </View>
     );
+  },
+
+  representPhoto: function() {
+    var uri = this.props.report.media && this.props.report.media[0].url;
+    return uri;
   }
+
 });
 
 var styles = StyleSheet.create({

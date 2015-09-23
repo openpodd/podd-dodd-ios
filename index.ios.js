@@ -9,12 +9,15 @@ var {
   TabBarIOS,
   Navigator,
   NavigationBar,
+  StatusBarIOS,
   Component,
 } = React;
 
 var NearbyView = require('./src/views/nearby');
 var FeedContainerView = require('./src/views/feed');
 var ReportCollectionStore = require('./src/stores/ReportCollectionStore');
+var IconIonic = require('react-native-vector-icons/Ionicons');
+
 
 var PODDLive = React.createClass({
 
@@ -25,21 +28,22 @@ var PODDLive = React.createClass({
   },
 
   render: function() {
+    StatusBarIOS.setStyle('light-content');
     return (
       <TabBarIOS
-        tintColor='#000'
+        tintColor='#444'
         barTintColor='#fff'
         translucent={false}>
 
-        <TabBarIOS.Item
-          title="Nearby"
+        <IconIonic.TabBarItem
+          title='Near by'
+          iconName="ios-location-outline"
           onPress={() => {
             this.setState({
               selectedTab: 'nearby'
             });
           }}
           selected={this.state.selectedTab === 'nearby'}>
-
           <Navigator
             configureScene={this.configureScene}        
             initialRoute={{
@@ -47,10 +51,11 @@ var PODDLive = React.createClass({
               component: NearbyView,
             }}
             renderScene={this.renderScene}/>
-        </TabBarIOS.Item>
+        </IconIonic.TabBarItem>
                 
-        <TabBarIOS.Item 
+        <IconIonic.TabBarItem
           title="Feed"
+          iconName="ios-chatboxes-outline"
           selected={this.state.selectedTab === 'feed'}
           onPress={() => {
             this.setState({
@@ -65,10 +70,11 @@ var PODDLive = React.createClass({
               component: FeedContainerView,
             }}
             renderScene={this.renderScene}/>
-        </TabBarIOS.Item>
+        </IconIonic.TabBarItem>
 
-        <TabBarIOS.Item 
+        <IconIonic.TabBarItem
           title="Profile"
+          iconName="ios-person-outline"
           onPress={() => {
             this.setState({
               selectedTab: 'profile'
@@ -76,10 +82,11 @@ var PODDLive = React.createClass({
           }}
           selected={this.state.selectedTab === 'profile'}>
           <View></View>
-        </TabBarIOS.Item>
+        </IconIonic.TabBarItem>
 
-        <TabBarIOS.Item 
+        <IconIonic.TabBarItem
           title="Notification"
+          iconName="ios-bell-outline"
           onPress={() => {
             this.setState({
               selectedTab: 'notification'
@@ -87,7 +94,7 @@ var PODDLive = React.createClass({
           }}
           selected={this.state.selectedTab === 'notification'}>
           <View></View>
-        </TabBarIOS.Item>
+        </IconIonic.TabBarItem>
       </TabBarIOS>
     );
   },
