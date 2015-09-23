@@ -10,41 +10,24 @@ var CHANGE_EVENT = 'change';
 var _reports = {};
 
 var ReportCollectionStore = assign({}, EventEmitter.prototype, {
-  /**
-   * DataStore
-   */
+
   findAll: function(callback) {
     if (_reports.length > 0) {
       callback(_reports);
       return;
     }
+
     fetch(config.development.feed_url)
       .then(response => response.json())
       .then(json => {
-        // Store report items in dictionary
-        // [1: { ...report...},
-        //  ,2: { ...report...}
-        //  ,3: { ...report...}]
-        var items = {};
-        _.each(json, (item) => {
-          items[item.id] = item;
+          _.each(json, (report) => {
+            _reports[report.id] = report;
+          });
+          return json;
         })
-        return items;
-      })
-      .then(newReports => {
-          // Update reports in DataStore
-          // [1:{}, 2:{}, 3:{}] + [1:{}, 4:{}] = [1!,2,3,4]
-          var reports = _reports;
-          _.each(newReports, (report) => {
-            reports[report.id] = report;
-          })
-          return reports;
-        })
-      .then(itemStore => { 
-        // Response allItems in DataStore
+      .then(json => { 
         // TODO: Pagiantor
-        console.log('reset reports store');
-        callback(itemStore)
+        callback(json);
       })
       .catch(error =>  console.log('error ' + error));
   },
