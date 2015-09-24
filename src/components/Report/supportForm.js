@@ -6,7 +6,7 @@ var Dimensions = require('Dimensions');
 var {width, height} = Dimensions.get('window');
 
 var AppActions = require('../../actions/AppActions');
-var AppConstants = require('../../constants/AppConstants');
+var ReportConstants = require('./reportConstants');
 
 var {
   StyleSheet,
@@ -17,9 +17,9 @@ var {
   ScrollView,
 } = React;
 
-var IS_LIKED = AppConstants.REPORT_ACTION.IS_LIKED;
-var IS_ENCOUNTERED = AppConstants.REPORT_ACTION.IS_ENCOUNTERED;
-var COMMENT = AppConstants.REPORT_ACTION.COMMENT;
+var IS_LIKED = ReportConstants.REPORT_ACTION.IS_LIKED;
+var IS_ENCOUNTERED = ReportConstants.REPORT_ACTION.IS_ENCOUNTERED;
+var COMMENT = ReportConstants.REPORT_ACTION.COMMENT;
 
 var SupportForm = React.createClass({
 

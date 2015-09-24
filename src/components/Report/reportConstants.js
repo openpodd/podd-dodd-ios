@@ -1,0 +1,7 @@
+module.exports = {
+  REPORT_ACTION: {
+    IS_LIKED: 'IS_LIKED',
+    IS_ENCOUNTERED: 'IS_ENCOUNTERED',
+    COMMENT: 'COMMENT',
+  }
+}

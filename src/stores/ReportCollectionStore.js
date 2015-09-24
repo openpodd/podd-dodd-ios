@@ -97,14 +97,14 @@ var ReportCollectionStore = assign({}, EventEmitter.prototype, {
 AppDispatcher.register(function(payload) {
   var action = payload.action;
   switch(action.actionType) {
-    case AppConstants.COMMENT_REPORT:
+    case 'COMMENT_REPORT':
       var reportId = action.id;
       var properties = action.properties;
       ReportCollectionStore.update(reportId, properties);
+      ReportCollectionStore.emitChange();
       break;
     default: break;
   }
-  ReportCollectionStore.emitChange();
   return true;
 })
 
