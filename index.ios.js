@@ -13,88 +13,133 @@ var {
   Component,
 } = React;
 
-var NearbyView = require('./src/views/nearby');
-var FeedContainerView = require('./src/views/feed');
-var ReportCollectionStore = require('./src/stores/ReportCollectionStore');
 var IconIonic = require('react-native-vector-icons/Ionicons');
 
+var NearbyView = require('./src/views/nearby');
+var FeedContainerView = require('./src/views/feed');
+
+var ReportModal = require('./src/components/Report/reportModal');
+var ReportStore = require('./src/stores/ReportStore');
+var UserDefaults = require('react-native-userdefaults-ios');
 
 var PODDLive = React.createClass({
 
   getInitialState: function() {
     return {
       selectedTab: 'nearby',
+      showReportModal: false,
+      reportModal: null,
     }
+  },
+
+  componentWillMount: function() {
+    ReportStore.addChangeListener(this.handleReportStoreEvent);
+  },
+
+  componentWillUnmount: function() {
+    ReportStore.removeChangeListener(this.handleReportStoreEvent);
+  },
+
+  handleReportStoreEvent: function() {
+    var thisObject = this;
+    UserDefaults.objectForKey('REPORT_MODAL')
+      .then(obj=>{
+        ReportStore.get(obj, function(report){
+          thisObject.setState({
+            showReportModal: true,
+            reportModal: report,
+          });
+        });
+      })
   },
 
   render: function() {
     StatusBarIOS.setStyle('light-content');
     return (
+      <View style={{flex:1}}>
+        {this.renderTabBar()}
+        {this.state.showReportModal && this.state.reportModal
+          ? <ReportModal 
+              report={this.state.reportModal}
+              onDismiss={this.dismissModal.bind(this)}/>
+          : null
+        }
+      </View>
+    );
+  },
+
+  dismissModal: function() {
+    this.setState({
+      showReportModal: false,
+    })
+  },
+
+  renderTabBar: function() {
+    return (
       <TabBarIOS
-        tintColor='#444'
-        barTintColor='#fff'
-        translucent={false}>
+          tintColor='#444'
+          barTintColor='#fff'
+          translucent={false}>
 
-        <IconIonic.TabBarItem
-          title='Near by'
-          iconName="ios-location-outline"
-          onPress={() => {
-            this.setState({
-              selectedTab: 'nearby'
-            });
-          }}
-          selected={this.state.selectedTab === 'nearby'}>
-          <Navigator
-            configureScene={this.configureScene}        
-            initialRoute={{
-              name: 'Nearby',
-              component: NearbyView,
+          <IconIonic.TabBarItem
+            title='Near by'
+            iconName="ios-location-outline"
+            selected={this.state.selectedTab === 'nearby'}
+            onPress={() => {
+              this.setState({
+                selectedTab: 'nearby'
+              });
+            }}>
+            <Navigator
+              configureScene={this.configureScene}        
+              initialRoute={{
+                name: 'Nearby',
+                component: NearbyView,
+              }}
+              renderScene={this.renderScene}/>
+          </IconIonic.TabBarItem>
+                  
+          <IconIonic.TabBarItem
+            title="Feed"
+            iconName="ios-chatboxes-outline"
+            selected={this.state.selectedTab === 'feed'}
+            onPress={() => {
+              this.setState({
+                selectedTab: 'feed'
+              });
+            }}>
+            <Navigator
+              configureScene={this.configureScene}        
+              initialRoute={{
+                name: 'Feed',
+                component: FeedContainerView,
+              }}
+              renderScene={this.renderScene}/>
+          </IconIonic.TabBarItem>
+          
+          <IconIonic.TabBarItem
+            title="Profile"
+            iconName="ios-person-outline"
+            onPress={() => {
+              this.setState({
+                selectedTab: 'profile'
+              });
             }}
-            renderScene={this.renderScene}/>
-        </IconIonic.TabBarItem>
-                
-        <IconIonic.TabBarItem
-          title="Feed"
-          iconName="ios-chatboxes-outline"
-          selected={this.state.selectedTab === 'feed'}
-          onPress={() => {
-            this.setState({
-              selectedTab: 'feed'
-            });
-          }}>
+            selected={this.state.selectedTab === 'profile'}>
+            <View></View>
+          </IconIonic.TabBarItem>
 
-          <Navigator
-            configureScene={this.configureScene}        
-            initialRoute={{
-              name: 'Feed',
-              component: FeedContainerView,
+          <IconIonic.TabBarItem
+            title="Notification"
+            iconName="ios-bell-outline"
+            onPress={() => {
+              this.setState({
+                selectedTab: 'notification'
+              });
             }}
-            renderScene={this.renderScene}/>
-        </IconIonic.TabBarItem>
-
-        <IconIonic.TabBarItem
-          title="Profile"
-          iconName="ios-person-outline"
-          onPress={() => {
-            this.setState({
-              selectedTab: 'profile'
-            });
-          }}
-          selected={this.state.selectedTab === 'profile'}>
-          <View></View>
-        </IconIonic.TabBarItem>
-
-        <IconIonic.TabBarItem
-          title="Notification"
-          iconName="ios-bell-outline"
-          onPress={() => {
-            this.setState({
-              selectedTab: 'notification'
-            });
-          }}
-          selected={this.state.selectedTab === 'notification'}>
-          <View></View>
-        </IconIonic.TabBarItem>
+            selected={this.state.selectedTab === 'notification'}>
+            <View></View>
+          </IconIonic.TabBarItem>
       </TabBarIOS>
     );
   },

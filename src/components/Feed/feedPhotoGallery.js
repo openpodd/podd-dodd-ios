@@ -34,6 +34,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#eee',
   },
   photo: {
+    flex: 1,
     height: 200,
   },
 });
