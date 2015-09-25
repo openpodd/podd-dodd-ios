@@ -24,13 +24,15 @@ var CommentView = require('../views/comment');
 var SupportForm = require('../components/Report/supportForm');
 
 var ReportCollectionStore = require('../../src/stores/ReportCollectionStore');
+var ForcedReloadDataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => true });
 
 class FeedContainerView extends Component {
-
   constructor(props) {
     super(props);
+    this.executeQuery = this.executeQuery.bind(this);
+    this.renderRow = this.renderRow.bind(this);
     this.state = {
-      dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id}),
+      dataSource: ForcedReloadDataSource,
       loaded: false,
       showSupportForm: false,
       selectingRowData: null,
@@ -38,11 +40,13 @@ class FeedContainerView extends Component {
   }
 
   componentWillMount() {
-    this.executeQuery()
     this.closeSupportModalForm = this.closeSupportModalForm.bind(this);
     this.presentCommentView = this.presentCommentView.bind(this);
-    this.executeQuery = this.executeQuery.bind(this);
     ReportCollectionStore.addChangeListener(this.executeQuery);
+  }
+
+  componentDidMount() {
+    this.executeQuery();
   }
 
   componentWillUnmount() {
@@ -73,7 +77,7 @@ class FeedContainerView extends Component {
       <View style={styles.content}>
         <ListView
           dataSource={this.state.dataSource}
-          renderRow={this.renderRow.bind(this)} />
+          renderRow={this.renderRow} />
           
         { this.state.showSupportForm ? 
           <SupportForm 
@@ -87,7 +91,6 @@ class FeedContainerView extends Component {
 
   renderRow(rowData, sectionID, rowID) {
     return (
-
       <TouchableHighlight 
         onPress={()=>this.presentCommentView(rowData)}
         underlayColor='#eee'>
@@ -122,12 +125,11 @@ class FeedContainerView extends Component {
   }
 
   executeQuery() {
-    var _this = this;
-    ReportCollectionStore.findAll(function(items){
-      _this.setState({
-        dataSource: _this.state.dataSource.cloneWithRows(items),
-        loaded: true,
-      });
+    var reports = ReportCollectionStore.findAll();
+    var rows = this.state.dataSource.cloneWithRows(reports);
+    this.setState({
+      dataSource: rows,
+      loaded: true,
     });
   }
 }

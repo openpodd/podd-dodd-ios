@@ -17,23 +17,26 @@ var IconIonic = require('react-native-vector-icons/Ionicons');
 
 var NearbyView = require('./src/views/nearby');
 var FeedContainerView = require('./src/views/feed');
+var ProfileView = require('./src/views/profile');
 
 var ReportModal = require('./src/components/Report/reportModal');
 var ReportStore = require('./src/stores/ReportStore');
-var UserDefaults = require('react-native-userdefaults-ios');
+var AppClient = require('./src/utils/AppClient');
+var AppActions = require('./src/actions/AppActions');
 
 var PODDLive = React.createClass({
 
   getInitialState: function() {
     return {
       selectedTab: 'nearby',
-      showReportModal: false,
+      showReportModal: ReportStore.shouldShowReportModal(),
       reportModal: null,
     }
   },
 
   componentWillMount: function() {
     ReportStore.addChangeListener(this.handleReportStoreEvent);
+    AppClient.getAllReports();
   },
 
   componentWillUnmount: function() {
@@ -41,16 +44,16 @@ var PODDLive = React.createClass({
   },
 
   handleReportStoreEvent: function() {
-    var thisObject = this;
-    UserDefaults.objectForKey('REPORT_MODAL')
-      .then(obj=>{
-        ReportStore.get(obj, function(report){
-          thisObject.setState({
-            showReportModal: true,
-            reportModal: report,
-          });
-        });
-      })
+    var report = ReportStore.getCurrent();
+    var dimissAction = ReportStore.shouldShowReportModal();
+    if (report.id) {
+      this.setState({
+        reportModal: report,
+      });
+    }
+    this.setState({
+      showReportModal: dimissAction,
+    });
   },
 
   render: function() {
@@ -58,7 +61,9 @@ var PODDLive = React.createClass({
     return (
       <View style={{flex:1}}>
         {this.renderTabBar()}
-        {this.state.showReportModal && this.state.reportModal
+        {this.state.showReportModal 
+          && this.state.reportModal 
+          && this.state.selectedTab === 'nearby'
           ? <ReportModal 
               report={this.state.reportModal}
               onDismiss={this.dismissModal.bind(this)}/>
@@ -69,9 +74,7 @@ var PODDLive = React.createClass({
   },
 
   dismissModal: function() {
-    this.setState({
-      showReportModal: false,
-    })
+    AppActions.dismissReportModal();
   },
 
   renderTabBar: function() {
@@ -126,7 +129,13 @@ var PODDLive = React.createClass({
               });
             }}
             selected={this.state.selectedTab === 'profile'}>
-            <View></View>
+             <Navigator
+              configureScene={this.configureScene}        
+              initialRoute={{
+                name: 'Profile',
+                component: ProfileView,
+              }}
+              renderScene={this.renderScene}/>
           </IconIonic.TabBarItem>
 
           <IconIonic.TabBarItem
@@ -153,14 +162,8 @@ var PODDLive = React.createClass({
 
   renderScene(route, navigator) {
     var Component = route.component;
-    var navBar = route.navigationBar;
-    if (navBar) {
-        navBar = React.addons.cloneWithProps(navBar, {navigator, route});
-    }
-
     return (
-        <View>
-          {navBar}
+        <View style={{flex: 1}}>
           <Component {...route.passProps} navigator={navigator} route={route}/>
         </View>
     );

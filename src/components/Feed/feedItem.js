@@ -15,7 +15,6 @@ var {
 var Moment = require('moment');
 var FeedPhotoGallery = require('./feedPhotoGallery');
 class FeedItem extends Component {
-
   render() {
     return (
       <View style={styles.row}>
@@ -30,7 +29,7 @@ class FeedItem extends Component {
 
         <View style={styles.supportToolbar}>
           <View style={styles.supportCount}>
-            <Text>{this.props.rowData.encounter_count}</Text>
+            <Text>{this.props.rowData.encounter_count || '0'}</Text>
             <Text>ประสบด้วย</Text>
             <Text>{this.props.rowData.like_count || '0' }</Text>
             <Text>ให้กำลังใจ</Text>
@@ -43,20 +42,20 @@ class FeedItem extends Component {
           </TouchableHighlight>
         </View>
 
-        { this.props.modal ? 
-          <View style={styles.commentToolbar}>
-            <TouchableHighlight style={styles.commentCount}>
-              <Text>{this.props.rowData.comment_count || 0} ความคิดเห็น</Text>
-            </TouchableHighlight>
-            <View style={styles.commentAction}>
-              <TouchableHighlight style={styles.action}>
-                <Text>Comment</Text>
+        { this.props.modal 
+          ? <View style={styles.commentToolbar}>
+              <TouchableHighlight style={styles.commentCount}>
+                <Text>{this.props.rowData.comment_count || 0} ความคิดเห็น</Text>
               </TouchableHighlight>
-              <TouchableHighlight style={styles.action}>
-                <Text>Share</Text>
-              </TouchableHighlight>
+              <View style={styles.commentAction}>
+                <TouchableHighlight style={styles.action}>
+                  <Text>Comment</Text>
+                </TouchableHighlight>
+                <TouchableHighlight style={styles.action}>
+                  <Text>Share</Text>
+                </TouchableHighlight>
+              </View>
             </View>
-          </View>
           : null }
         <View style={styles.rowSeparator}/>
      </View>
