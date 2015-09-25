@@ -1,4 +1,3 @@
-/* @flow */
 'use strict';
 
 var React = require('react-native');
@@ -15,8 +14,15 @@ var {
 
 var FeedItem = require('../Feed/feedItem');
 var ReportStore = require('../../../src/stores/ReportStore');
+var SupportForm = require('./supportForm');
 
 class ReportModal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showSupportForm: false,
+    };
+  }
 
   render() {
     return (
@@ -27,23 +33,54 @@ class ReportModal extends Component {
               style={styles.dismissView}/>
           </View>
 
-          <ScrollView 
-            contentContainerStyle={styles.modalContentContainer}
-            style={styles.modal}>
-            <TouchableOpacity 
-              onPress={this.onDismissModal.bind(this)}
-              style={styles.dismissView}/>
-
-            <View style={styles.feedContainer}>
-              <FeedItem rowData={this.props.report}/>   
-            </View>
-          </ScrollView>
+          { this.state.showSupportForm 
+            ? this.renderSupportForm()
+            : this.renderReportContainer()
+          }
       </View>
+    );
+  }
+
+  renderReportContainer() {
+    return (
+      <ScrollView 
+        contentContainerStyle={styles.modalContentContainer}
+        style={styles.modal}>
+        <TouchableOpacity 
+          onPress={this.onDismissModal.bind(this)}
+          style={styles.dismissView}/>
+
+        <View style={styles.feedContainer}>
+          <FeedItem 
+            modal 
+            rowData={this.props.report}
+            onPressSupport={(rowData)=>{
+              this.setState({
+                showSupportForm: true,
+              });
+            }}/>   
+        </View>
+      </ScrollView>
+    );
+  }
+
+  renderSupportForm() {
+    return (
+      <SupportForm 
+        rowData={this.props.report}
+        onDismiss={this.onCloseSupportModalForm.bind(this)}
+        onSubmit={this.onCloseSupportModalForm.bind(this)}/>
     );
   }
 
   onDismissModal() {
     this.props.onDismiss && this.props.onDismiss();
+  }
+
+  onCloseSupportModalForm() {
+    this.setState({
+      showSupportForm: false,
+    });
   }
 };
 
