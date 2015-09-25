@@ -10,6 +10,7 @@ var {
 } = React;
 
 class ProfileView extends Component {
+
   render() {
     return (
       <View style={styles.container}>

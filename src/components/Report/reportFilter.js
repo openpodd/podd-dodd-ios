@@ -1,4 +1,3 @@
-/* @flow */
 'use strict';
 
 var React = require('react-native');
@@ -13,17 +12,53 @@ var {
   Component,
 } = React;
 
+var AppActions = require('../../actions/AppActions');
+var FilterStore = require('../../stores/FilterStore');
+
 var ReportFormContainer = require('../../views/reportForm');
 
 class ReportFilterBox extends Component {
+
+  constructor(props) {
+    super(props);
+    this.executeQuery = this.executeQuery.bind(this);
+    this.state = {
+      currentFilter: null,
+    };
+  }
+
+  componentWillMount() {
+    FilterStore.addChangeListener(this.executeQuery);
+  }
+
+  componentDidMount() {
+    this.executeQuery();
+  }
+
+  componentWillUnmount() {
+    FilterStore.removeChangeListener(this.executeQuery);
+  }
+
+  executeQuery() {
+    var currentFilter = FilterStore.getCurrentFilter();
+    this.setState({
+      currentFilter: currentFilter,
+    })
+  }
+
   render() {
     return (
       <View style={styles.filterBox}>
         <TouchableHighlight 
           underlayColor='#eee'
+          onPress={this.onFilterPress.bind(this)}
           style={styles.filterButtonContainer}>
           <View style={styles.filterButton}>
-            <Text style={styles.filterButtonTitle}>กัลยานิวัฒนา</Text>
+            <Text style={styles.filterButtonTitle}>
+              { this.state.currentFilter
+                ? this.state.currentFilter.name
+                : 'เลือกพื้นที่'}
+            </Text>
             <Image
               style={styles.filterArrow}
               resizeMode='contain'
@@ -38,6 +73,10 @@ class ReportFilterBox extends Component {
         </TouchableHighlight>
       </View>
     );
+  }
+
+  onFilterPress() {
+    AppActions.viewFilterModal();
   }
 
   onPress() {

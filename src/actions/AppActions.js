@@ -21,6 +21,25 @@ var AppActions = {
     AppDispatcher.dispatch({
       actionType: AppConstants.DISMISS_REPORT_MODAL,
     });
+  },
+
+  viewFilterModal: function() {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.FILTER_MODAL,
+    });
+  },
+
+  dismissFilterModal: function(rowData) {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.DISMISS_FILTER_MODAL,
+      rowData: rowData
+    });
+  },
+
+  resetFilter: function() {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.RESET_FILTER,
+    });
   }
 }
 

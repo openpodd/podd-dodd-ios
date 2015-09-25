@@ -19,8 +19,12 @@ var NearbyView = require('./src/views/nearby');
 var FeedContainerView = require('./src/views/feed');
 var ProfileView = require('./src/views/profile');
 
+var FilterModal = require('./src/components/Filter/filterModal');
 var ReportModal = require('./src/components/Report/reportModal');
+
 var ReportStore = require('./src/stores/ReportStore');
+var FilterStore = require('./src/stores/FilterStore');
+
 var AppClient = require('./src/utils/AppClient');
 var AppActions = require('./src/actions/AppActions');
 
@@ -31,16 +35,20 @@ var PODDLive = React.createClass({
       selectedTab: 'nearby',
       showReportModal: ReportStore.shouldShowReportModal(),
       reportModal: null,
+      filterModal: false,
     }
   },
 
   componentWillMount: function() {
     ReportStore.addChangeListener(this.handleReportStoreEvent);
+    FilterStore.addChangeListener(this.handleFilterStoreEvent);
     AppClient.getAllReports();
+    AppClient.getAllFilters();
   },
 
   componentWillUnmount: function() {
     ReportStore.removeChangeListener(this.handleReportStoreEvent);
+    FilterStore.removeChangeListener(this.handleFilterStoreEvent);
   },
 
   handleReportStoreEvent: function() {
@@ -56,6 +64,13 @@ var PODDLive = React.createClass({
     });
   },
 
+  handleFilterStoreEvent: function() {
+    var shouldShowFilterModal = FilterStore.shouldShowFilterModal();
+    this.setState({
+      filterModal: shouldShowFilterModal,
+    }) 
+  },
+
   render: function() {
     StatusBarIOS.setStyle('light-content');
     return (
@@ -67,6 +82,10 @@ var PODDLive = React.createClass({
           ? <ReportModal 
               report={this.state.reportModal}
               onDismiss={this.dismissModal.bind(this)}/>
+          : null
+        }
+        {this.state.filterModal
+          ? <FilterModal/>
           : null
         }
       </View>
