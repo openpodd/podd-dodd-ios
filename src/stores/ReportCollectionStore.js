@@ -13,10 +13,10 @@ var _reports = {};
 var ReportCollectionStore = assign({}, EventEmitter.prototype, {
 
   findAll: function(callback) {
-    var allReports = [];
-    _.each(_reports, function(report) {
-      allReports.push(_reports[report.id]);
-    });
+    allReports = _.chain(_reports)
+                 .map(report => _reports[report.id])
+                 .sortBy(report => -1 * new Date(report.created))
+                 .value();
     return allReports;
   },
 
