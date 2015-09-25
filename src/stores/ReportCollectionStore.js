@@ -1,10 +1,11 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EventEmitter = require('events').EventEmitter;
 var AppConstants = require('../constants/AppConstants');
+var ReportConstants = require('../components/Report/reportConstants');
+
 var config = require('../../config.js');
 var assign = require('object-assign');
 var _ = require('underscore');
-
 var CHANGE_EVENT = 'change';
 
 var _reports = {};
@@ -12,44 +13,15 @@ var _reports = {};
 var ReportCollectionStore = assign({}, EventEmitter.prototype, {
 
   findAll: function(callback) {
-    if (_reports.length > 0) {
-      callback(_reports);
-      return;
-    }
-
-    fetch(config.development.feed_url)
-      .then(response => response.json())
-      .then(json => {
-          _.each(json, (report) => {
-            _reports[report.id] = report;
-          });
-          return json;
-        })
-      .then(json => { 
-        // TODO: Pagiantor
-        callback(json);
-      })
-      .catch(error =>  console.log('error ' + error));
+    var allReports = [];
+    _.each(_reports, function(report) {
+      allReports.push(_reports[report.id]);
+    });
+    return allReports;
   },
 
   find: function(id) {
     return _reports[id];
-  },
-
-  update: function(reportId, properties) {
-    var report = _reports[reportId];
-    if (report) {
-      // TODO: Send to ReportWorker
-      var isLiked = properties[AppConstants.REPORT_ACTION.IS_LIKED];
-      var isEncounter = properties[AppConstants.REPORT_ACTION.IS_ENCOUNTERED];
-      var comment = properties[AppConstants.REPORT_ACTION.COMMENT];
-      if (isLiked) ReportCollectionStore.incrementLikeCount(reportId);
-      if (isEncounter) ReportCollectionStore.incrementEncounterCount(reportId);
-      if (comment !== null) ReportCollectionStore.addComment(reportId, properties);
-    } else {
-      // TODO: Send to NetworkRequestQueue
-      console.warn('Cannot find report id ' + id);
-    }
   },
 
   findComment: function(id, callback) {
@@ -57,25 +29,6 @@ var ReportCollectionStore = assign({}, EventEmitter.prototype, {
       .then(response => response.json())
       .then(json=>{callback(json)})
       .catch(error =>  console.log('error ' + error));
-  },
-
-  incrementLikeCount: function(id) {
-    var report = _reports[id];
-    report.like_count = (report.like_count || 0) + 1;
-    _reports[id] = report;
-    console.log(report.id + 'has like_count = ' + report.like_count);
-  },
-
-  incrementEncounterCount: function(id) {
-    var report = _reports[id];
-    report.encounter_count = (report.encounter_count || 0) + 1;
-    _reports[id] = report;
-  },
-
-  addComment: function(id, properties) {
-    var report = _reports[id];
-    report.comment_count += 1;
-    _reports[id] = report;
   },
 
   /**
@@ -94,18 +47,52 @@ var ReportCollectionStore = assign({}, EventEmitter.prototype, {
   },
 });
 
-AppDispatcher.register(function(payload) {
-  var action = payload.action;
-  switch(action.actionType) {
-    case 'COMMENT_REPORT':
-      var reportId = action.id;
-      var properties = action.properties;
-      ReportCollectionStore.update(reportId, properties);
+function _add(json) {
+  _.each(json, (report) => {
+    _reports[report.id] = report;
+  });
+}
+
+function _update(reportId, properties) {
+  
+  var report = _reports[reportId];
+  if (report) {
+    var isLiked = properties[ReportConstants.REPORT_ACTION.IS_LIKED];
+    var isEncounter = properties[ReportConstants.REPORT_ACTION.IS_ENCOUNTERED];
+    var comment = properties[ReportConstants.REPORT_ACTION.COMMENT];
+
+    if (isLiked) {
+      report.like_count = (report.like_count || 0) + 1;
+    }
+
+    if (isEncounter) {
+      report.encounter_count = (report.encounter_count || 0) + 1;
+    }
+
+    if (comment) {
+      report.comment_count = (report.comment_count || 0) + 1;
+    }
+  } else {
+    console.warn('Cannot find report id ' + id);
+  }
+}
+
+ReportCollectionStore.dispatchToken = AppDispatcher.register(function(payload) {
+
+  switch(payload.actionType) {
+    case AppConstants.COMMENT_REPORT:
+      var reportId = payload.id;
+      var properties = payload.properties;
+      _update(reportId, properties);
+      ReportCollectionStore.emitChange();
+      break;
+
+    case AppConstants.RECEIVE_RAW_REPORTS:
+      _add(payload.rawReports);
       ReportCollectionStore.emitChange();
       break;
     default: break;
   }
-  return true;
 })
 
 module.exports = ReportCollectionStore;
