@@ -3,7 +3,6 @@
 var React = require('react-native');
 var Dimensions = require('Dimensions');
 var {width, height} = Dimensions.get('window');
-var _ = require('underscore');
 
 var {
   StyleSheet,
@@ -24,6 +23,7 @@ var AppConstants = require('../../constants/AppConstants');
 class ReportMap extends Component {
   constructor(props) {
     super(props);
+    this.executeQuery = this.executeQuery.bind(this);
     this.state = {
       mapRegion: null,
       mapRegionInput: null,
@@ -34,19 +34,28 @@ class ReportMap extends Component {
     };
   }
 
-  componentDidMount() {
-    var thisObject = this;
-    ReportCollectionStore.findAll((reports)=> {
-      var annotations = _.map(reports, function(value, key){
-        var annotation = value;
-        annotation.id = value.id;
-        annotation.title = value.content;
-        annotation.subtitle = value.created;
-        return annotation;
-      });
-      thisObject.setState({
-        annotations: annotations,
-      });
+  componentWillMount() {
+    ReportCollectionStore.addChangeListener(this.executeQuery);
+  }
+
+  componentWillUnmount() {
+    ReportCollectionStore.removeChangeListener(this.executeQuery);
+  }
+
+  executeQuery() {
+    var reports = ReportCollectionStore.findAll();
+    var annotations = [];
+    reports.forEach(report => {
+      var annotation = {};
+      annotation.id = report.id;
+      annotation.title = report.content;
+      annotation.subtitle = report.created;
+      annotation.latitude = report.latitude;
+      annotation.longitude = report.longitude;
+      annotations.push(annotation);
+    });
+    this.setState({
+      annotations: annotations,
     });
   }
 
@@ -89,50 +98,6 @@ var styles = StyleSheet.create({
   mapView: {
     flex: 1,
   },
-
-  modalContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'transparent',
-    alignItems: 'stretch',
-    alignSelf: 'center',
-  },
-
-  modalUnderlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.2,
-    backgroundColor: '#000'
-  },
-
-  modal: {
-    alignSelf: 'stretch',
-    paddingTop: 40,
-    marginHorizontal: 40,
-  },
-
-  modalContentContainer: {
-    justifyContent: 'center',
-    alignItems: 'stretch',
-  },
-
-  feedContainer: {
-  },
-
-  dismissView: {
-    position: 'absolute',
-    top: -40,
-    width: width,
-    height: height,
-    backgroundColor: 'transparent',
-  },
-
 });
 
 module.exports = ReportMap;
