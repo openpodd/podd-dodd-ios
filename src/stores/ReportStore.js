@@ -48,16 +48,6 @@ var ReportStore = assign({}, EventEmitter.prototype, {
   },
 });
 
-function _update(reportId, properties) {
-
-  if (_report.id === reportId) {
-    var isLiked = properties[ReportConstants.REPORT_ACTION.IS_LIKED];
-    _report.like_count = isLiked && (parseInt(_report.like_count) || 0) + 1;
-  } else {
-    console.warn('Cannot find report id ' + reportId);
-  }
-}
-
 ReportStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   switch(payload.actionType) {
