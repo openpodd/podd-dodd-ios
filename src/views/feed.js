@@ -20,7 +20,7 @@ var Moment = require('moment');
 var FeedItem = require('../components/Feed/feedItem');
 var ReportFilterBox = require('../components/Report/reportFilter');
 var ReportButton = require('../components/Report/reportButton');
-var CommentView = require('../views/comment');
+var ReportView = require('../views/report');
 var SupportForm = require('../components/Report/supportForm');
 
 var ReportCollectionStore = require('../../src/stores/ReportCollectionStore');
@@ -111,7 +111,7 @@ class FeedContainerView extends Component {
 
   presentCommentView(rowData) {
     this.props.navigator.push({
-      component: CommentView,
+      component: ReportView,
       passProps: {rowData: rowData},
     });
   }

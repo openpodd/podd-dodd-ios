@@ -29,8 +29,9 @@ var SupportForm = require('../components/Report/supportForm');
 
 var config = require('../../config.js');
 var ReportCollectionStore = require('../../src/stores/ReportCollectionStore');
+var NavigationBar = require('../components/Navigation/NavigationBar');
 
-class CommentView extends Component {
+class ReportView extends Component {
   constructor(props) {
     super(props);
     this.closeSupportModalForm = this.closeSupportModalForm.bind(this);
@@ -68,12 +69,14 @@ class CommentView extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>รายงาน</Text>
-        </View>
+        <NavigationBar onBack={()=>{
+          this.props.navigator.pop();
+        }}/>
+
         <View style={{height:contentHeight}}>
           <ListView
             dataSource={this.state.dataSource}
+            automaticallyAdjustContentInsets={false}
             renderHeader={()=>{
               return (
                 <FeedItem rowData={this.state.report} onPressSupport={()=> {
@@ -110,23 +113,7 @@ class CommentView extends Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-
-  headerContainer: {
-    flex: 1,
-    alignItems: 'stretch',
-    justifyContent: 'center',
-    height: navigationBarHeight,
-    backgroundColor: '#333',
-    paddingTop: 20,
-  },
-
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '100',
-    textAlign: 'center',
-    alignItems: 'center',
-    color: '#fff',
+    backgroundColor: '#fff',
   },
 
   scrollView: {
@@ -138,4 +125,4 @@ var styles = StyleSheet.create({
   
 });
 
-module.exports = CommentView;
+module.exports = ReportView;
