@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		008F07F31AC5B25A0029DE68 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
@@ -33,6 +32,7 @@
 		83AA834D1BB2A497003D7F84 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 83AA83451BB2A497003D7F84 /* Zocial.ttf */; };
 		83AA83541BB2A4D9003D7F84 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA83531BB2A4B8003D7F84 /* libRNVectorIcons.a */; };
 		83AA835E1BB3A6C6003D7F84 /* libRNUserDefaultsIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 83AA835B1BB3A6B8003D7F84 /* libRNUserDefaultsIOS.a */; };
+		83AA83601BB52D36003D7F84 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 83AA835F1BB52D36003D7F84 /* main.jsbundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,7 +137,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
@@ -168,6 +167,7 @@
 		83AA83451BB2A497003D7F84 /* Zocial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Zocial.ttf; sourceTree = "<group>"; };
 		83AA834E1BB2A4B8003D7F84 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		83AA83551BB3A6B8003D7F84 /* RNUserDefaultsIOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNUserDefaultsIOS.xcodeproj; path = "../node_modules/react-native-userdefaults-ios/RNUserDefaultsIOS.xcodeproj"; sourceTree = "<group>"; };
+		83AA835F1BB52D36003D7F84 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,8 +282,8 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				83AA835F1BB52D36003D7F84 /* main.jsbundle */,
 			);
 			path = PODDLive;
 			sourceTree = "<group>";
@@ -614,7 +614,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				83AA834C1BB2A497003D7F84 /* Octicons.ttf in Resources */,
-				008F07F31AC5B25A0029DE68 /* main.jsbundle in Resources */,
 				83AA83491BB2A497003D7F84 /* Foundation.ttf in Resources */,
 				83AA834A1BB2A497003D7F84 /* Ionicons.ttf in Resources */,
 				83AA83461BB2A497003D7F84 /* Entypo.ttf in Resources */,
@@ -622,6 +621,7 @@
 				83AA834D1BB2A497003D7F84 /* Zocial.ttf in Resources */,
 				83AA834B1BB2A497003D7F84 /* MaterialIcons.ttf in Resources */,
 				83AA83471BB2A497003D7F84 /* EvilIcons.ttf in Resources */,
+				83AA83601BB52D36003D7F84 /* main.jsbundle in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				83AA83481BB2A497003D7F84 /* FontAwesome.ttf in Resources */,
 			);
