@@ -14,8 +14,7 @@ var {
 
 var AppActions = require('../../actions/AppActions');
 var FilterStore = require('../../stores/FilterStore');
-
-var ReportFormContainer = require('../../views/reportForm');
+var ReportForm = require('./reportForm');
 
 class ReportFilterBox extends Component {
 
@@ -24,6 +23,7 @@ class ReportFilterBox extends Component {
     this.executeQuery = this.executeQuery.bind(this);
     this.state = {
       currentFilter: null,
+      isReportModalOpen: false,
     };
   }
 
@@ -65,10 +65,13 @@ class ReportFilterBox extends Component {
               source={require('image!arrow-down')} />
           </View>
         </TouchableHighlight>
+
         <TouchableHighlight 
           underlayColor='#eee'
           style={styles.reportButton}
-          onPress={this.onPress.bind(this)}>
+          onPress={()=>{
+            this.onPress();
+          }}>
           <Text>Report</Text>
         </TouchableHighlight>
       </View>
@@ -80,8 +83,8 @@ class ReportFilterBox extends Component {
   }
 
   onPress() {
-    this.props.navigator.push({
-        component: ReportFormContainer,
+    this.props.navigator && this.props.navigator.push({
+        component: ReportForm,
         sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
         passProps: {
           closeModal: this.onClose.bind(this),
@@ -93,7 +96,6 @@ class ReportFilterBox extends Component {
     this.props.navigator.pop();
   }
 }
-
 
 var styles = StyleSheet.create({
 	filterBox: {
@@ -141,6 +143,15 @@ var styles = StyleSheet.create({
     alignSelf: 'stretch',
     justifyContent: 'center',
   },
+
+  modal: {
+    flex: 1,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0
+  }
 });
 
 

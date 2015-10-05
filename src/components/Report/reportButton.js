@@ -12,7 +12,7 @@ var {
   Navigator,
 } = React;
 
-var ReportFormContainer = require('../../views/reportForm');
+var ReportForm = require('./reportForm');
 
 class ReportButton extends Component {
 
@@ -31,7 +31,7 @@ class ReportButton extends Component {
 
   onPress() {
     this.props.navigator.push({
-        component: ReportFormContainer,
+        component: ReportForm,
         sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
         passProps: {
           closeModal: this.onClose.bind(this),
